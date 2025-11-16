@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">practica1</string>
+    <string name="storm">STORM</string>
+    <string name="logo_storm">Logo Storm</string>
+    <string name="weather_app">Weather App</string>
+    <string name="insert_city">Insert City</string>
+    <string name="search">Search</string>
+    <string name="error_loading_favorite_cities">Error loading favorite cities</string>
+    <string name="favorite_cities">Favorite Cities:</string>
+    <string name="delete">Delete</string>
+    <string name="back_button">back button</string>
+    <string name="tit_info_gral">General:</string>
+    <string name="info_general">Weather App is an application that displays weather information for different cities. It has a list of cities added to favorites and also offers the option to expand the weather information displayed in the list.</string>
+    <string name="tit_about_api">API:</string>
+    <string name="about_apí">The API used was the Weatherbit API, which provides us with current and future weather information.</string>
+    <string name="tit_diseñadores">Designers:</string>
+    <string name="tomi">• Tomás Curien</string>
+    <string name="nico">• Nicolás García Bietti</string>
+    <string name="benja">• Benjamín Manzi</string>
+    <string name="tit_aviso_legal">Legal:</string>
+    <string name="aviso_legal">Weather data is approximate and may vary depending on the source.</string>
+    <string name="about">about</string>
+    <string name="titulo_about">Weather App</string>
+    <string name="sugerencias_o_recomendaciones">Suggestions and Recommendations</string>
+    <string name="sugerencia_text">Do you have suggestions or found a bug? \n Write to us at:</string>
+    <string name="tomi_mail">• curientomas@gmail.com / +5492996269825</string>
+    <string name="nico_mail">• nicobietti2018@gmail.com / +5491131981719</string>
+    <string name="benja_mail">• benja.manzi05@gamil.com / +5493487612007</string>
+    <string name="version">Version:</string>
+    <string name="version_num">1.0.0</string>
+</resources>
