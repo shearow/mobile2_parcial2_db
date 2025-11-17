@@ -31,9 +31,9 @@ object FavoriteCitiesRepositorySingleton {
         _allCities.value = requireDbHelper().getAllCities()
     }
 
-    suspend fun insertCity(name: String){
+    suspend fun insertCity(cityName: String){
         withContext(Dispatchers.IO){
-            requireDbHelper().insertCity(name)
+            requireDbHelper().insertCity(cityName)
             withContext(Dispatchers.Main){
                 loadCities()
             }
@@ -49,12 +49,18 @@ object FavoriteCitiesRepositorySingleton {
         }
     }
 
-    suspend fun deleteCityByName(name: String) {
+    suspend fun deleteCityByName(cityName: String) {
         withContext(Dispatchers.IO) {
-            requireDbHelper().deleteCityByName(name)
+            requireDbHelper().deleteCityByName(cityName)
             withContext(Dispatchers.Main) {
                 loadCities()
             }
+        }
+    }
+
+    suspend fun isFavorite(cityName: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            requireDbHelper().isFavorite(cityName)
         }
     }
 }

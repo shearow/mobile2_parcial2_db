@@ -4,13 +4,13 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.practica1.data.DailyForecast
 import com.example.practica1.data.DailyForecastResponse
-import com.example.practica1.repository.FavoriteCitiesRepository
+import com.example.practica1.repository.FavoriteCitiesRepositorySingleton
+import kotlinx.coroutines.launch
 
 class ForecastDetailViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val favoriteRepo = FavoriteCitiesRepository(application)
 
     private val _forecastList = MutableLiveData<List<DailyForecast>>()
     private val _mainDay = MutableLiveData<DailyForecast>()
@@ -42,7 +42,11 @@ class ForecastDetailViewModel(application: Application) : AndroidViewModel(appli
         _countryCode.value = response.country_code
         _forecastList.value = currentList
         _mainDay.value = currentList.firstOrNull()
-        _isFavorite.value = favoriteRepo.isFavorite(response.city_name)
+
+        viewModelScope.launch {
+            val isFav = FavoriteCitiesRepositorySingleton.isFavorite(response.city_name)
+            _isFavorite.value = isFav
+        }
     }
 
     fun selectDay(position: Int) {
@@ -53,13 +57,16 @@ class ForecastDetailViewModel(application: Application) : AndroidViewModel(appli
 
     fun toggleFavorite() {
         val city = forecastResponse?.city_name ?: return
-        val current = _isFavorite.value ?: false
+        viewModelScope.launch {
+            val current = _isFavorite.value ?: false
 
-        if (current) {
-            favoriteRepo.removeFavorite(city)
-        } else {
-            favoriteRepo.addFavorite(city)
+            if (current) {
+                FavoriteCitiesRepositorySingleton.deleteCityByName(city)
+            } else {
+                FavoriteCitiesRepositorySingleton.insertCity(city)
+            }
+
+            _isFavorite.postValue(!current)
         }
-        _isFavorite.value = !current
     }
 }

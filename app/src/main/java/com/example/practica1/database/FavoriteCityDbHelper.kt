@@ -39,10 +39,10 @@ class FavoriteCityDbHelper(context: Context): SQLiteOpenHelper(
         onCreate(db)
     }
 
-    fun insertCity(name: String): Long {
+    fun insertCity(cityName: String): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
-            put(COLUMN_NAME, name)
+            put(COLUMN_NAME, cityName)
         }
         return db.insert(TABLE_CITY, null, values)
     }
@@ -59,7 +59,6 @@ class FavoriteCityDbHelper(context: Context): SQLiteOpenHelper(
             null,
             "$COLUMN_NAME ASC"
         )
-
         cursor.use {
             while (it.moveToNext()) {
                 val id = it.getLong(it.getColumnIndexOrThrow(COLUMN_ID))
@@ -68,7 +67,6 @@ class FavoriteCityDbHelper(context: Context): SQLiteOpenHelper(
                 cities.add(City(id, name))
             }
         }
-
         return cities
     }
 
@@ -81,13 +79,28 @@ class FavoriteCityDbHelper(context: Context): SQLiteOpenHelper(
         )
     }
 
-    fun deleteCityByName(name: String): Int {
+    fun deleteCityByName(cityName: String): Int {
         val db = writableDatabase
         return db.delete(
             TABLE_CITY,
             "$COLUMN_NAME = ?",
-            arrayOf(name)
+            arrayOf(cityName)
         )
     }
 
+    fun isFavorite(cityName: String): Boolean {
+        val db = readableDatabase
+        val cursor = db.query(
+            TABLE_CITY,
+            arrayOf(COLUMN_NAME),
+            "$COLUMN_NAME = ?",
+            arrayOf(cityName),
+            null,
+            null,
+            null
+        )
+        val exists = cursor.moveToFirst()
+        cursor.close()
+        return exists
+    }
 }
