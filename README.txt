@@ -1,4 +1,4 @@
-# Parcial N°1 - Programación de Aplicaciones Móviles II
+﻿# Parcial N°2 - Programación de Aplicaciones Móviles II
 
 ## App
 Esta aplicación se basa en consumir los servicios de una **API de clima llamada Weatherbit**, ofreciendo al usuario información sobre el clima actual y los pronósticos de las ciudades que desee observar.  
