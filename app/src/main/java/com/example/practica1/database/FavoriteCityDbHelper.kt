@@ -15,12 +15,12 @@ class FavoriteCityDbHelper(context: Context): SQLiteOpenHelper(
         private const val DATABASE_NAME = "favoriteCity.db"
         private const val DATABASE_VERSION = 1
 
-        //Tabla
+        //Table
         const val TABLE_CITY = "city"
         const val COLUMN_ID = "id"
         const val COLUMN_NAME = "name"
 
-        //SQL CREAR TABLA
+        //SQL Create table
         private const val CREATE_TABLE_CITY = """
             CREATE TABLE $TABLE_CITY (
                $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,7 +34,6 @@ class FavoriteCityDbHelper(context: Context): SQLiteOpenHelper(
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Eliminar la tabla anterior si existe y crear una nueva
         db.execSQL("DROP TABLE IF EXISTS $TABLE_CITY")
         onCreate(db)
     }

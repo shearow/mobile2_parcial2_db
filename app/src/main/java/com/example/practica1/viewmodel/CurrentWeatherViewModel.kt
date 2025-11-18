@@ -26,7 +26,7 @@ class CurrentWeatherViewModel(application: Application) : AndroidViewModel(appli
     val isLoading: LiveData<Boolean> get() = _isLoading
     val error: LiveData<String?> get() = _error
 
-    // Observa automáticamente la base de datos
+    // Automatically check the database
     init {
         FavoriteCitiesRepositorySingleton.allCities.observeForever { cities ->
             loadWeatherFor(cities)

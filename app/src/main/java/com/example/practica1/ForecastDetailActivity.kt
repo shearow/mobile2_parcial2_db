@@ -19,26 +19,25 @@ class ForecastDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityForecastDetailBinding
     private lateinit var adapter: ForecastAdapter
-    private val viewModel: ForecastDetailViewModel by viewModels()
-
+    private val vmForecastDetail: ForecastDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityForecastDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupRecycler()
-        setupListeners()
-
+        // Get intent forecastData
         val forecastData = intent.getSerializableExtra("forecastData") as? DailyForecastResponse
-        viewModel.loadForecast(forecastData)
+        vmForecastDetail.loadForecast(forecastData)
 
+        setupRecyclers()
+        setupListeners()
         setupObservers()
     }
 
-    private fun setupRecycler() {
+    private fun setupRecyclers() {
         adapter = ForecastAdapter(emptyList()) { position ->
-            viewModel.selectDay(position)
+            vmForecastDetail.selectDay(position)
         }
         binding.rvForecastDays.adapter = adapter
         binding.rvForecastDays.layoutManager =
@@ -47,28 +46,28 @@ class ForecastDetailActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.btnBack.setOnClickListener { finish() }
-        binding.btnFavorite.setOnClickListener { viewModel.toggleFavorite() }
+        binding.btnFavorite.setOnClickListener { vmForecastDetail.toggleFavorite() }
     }
 
     private fun setupObservers() {
-        viewModel.forecastList.observe(this) { list ->
+        vmForecastDetail.forecastList.observe(this) { list ->
             adapter.updateData(list)
         }
 
-        viewModel.mainDay.observe(this) { day ->
+        vmForecastDetail.mainDay.observe(this) { day ->
             updateMainDayUI(day)
         }
 
-        viewModel.cityName.observe(this) { city ->
-            val country = viewModel.countryCode.value ?: ""
+        vmForecastDetail.cityName.observe(this) { city ->
+            val country = vmForecastDetail.countryCode.value ?: ""
             binding.tvCityAndCountry.text = "$city, $country"
         }
 
-        viewModel.isFavorite.observe(this) { isFav ->
+        vmForecastDetail.isFavorite.observe(this) { isFav ->
             updateFavoriteIcon(isFav)
         }
 
-        viewModel.error.observe(this) { msg ->
+        vmForecastDetail.error.observe(this) { msg ->
             msg?.let {
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }

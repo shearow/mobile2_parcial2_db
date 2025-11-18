@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.practica1.adapter.CityWeatherAdapter
 import com.example.practica1.databinding.ActivityMainBinding
@@ -16,9 +16,9 @@ import com.example.practica1.viewmodel.ForecastViewModel
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var vmCurrentWeather: CurrentWeatherViewModel
-    private lateinit var vmForecastViewModel: ForecastViewModel
     private lateinit var adapter: CityWeatherAdapter
+    private val vmCurrentWeather: CurrentWeatherViewModel by viewModels()
+    private val vmForecast: ForecastViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,13 +28,16 @@ class MainActivity : AppCompatActivity() {
         // Initialize Database
         FavoriteCitiesRepositorySingleton.initialize(applicationContext)
 
-        vmCurrentWeather = ViewModelProvider(this)[CurrentWeatherViewModel::class.java]
-        vmForecastViewModel = ViewModelProvider(this)[ForecastViewModel::class.java]
+        setupRecyclers()
+        setupListeners()
+        setupObservers()
+    }
 
+    private fun setupRecyclers(){
         adapter = CityWeatherAdapter(
             emptyList(),
             onCityClick = { cityName ->
-                vmForecastViewModel.getForecast(cityName)
+                vmForecast.getForecast(cityName)
             },
             onDeleteClick = { cityName ->
                 vmCurrentWeather.removeFavorite(cityName)
@@ -42,16 +45,13 @@ class MainActivity : AppCompatActivity() {
         )
         binding.rvCities.adapter = adapter
         binding.rvCities.layoutManager = LinearLayoutManager(this)
-
-        setupListeners()
-        setupObservers()
     }
 
     private fun setupListeners() {
         binding.btnSearchCity.setOnClickListener {
             val city = binding.etSearchCity.text.toString().trim()
             if (city.isNotEmpty()) {
-                vmForecastViewModel.getForecast(city)
+                vmForecast.getForecast(city)
             } else {
                 Toast.makeText(this, "Enter a city", Toast.LENGTH_SHORT).show()
             }
@@ -64,10 +64,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-
         vmCurrentWeather.weatherList.observe(this) { list ->
             adapter.updateList(list)
-
         }
 
         vmCurrentWeather.error.observe(this) { errorMessage ->
@@ -89,16 +87,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        vmForecastViewModel.forecast.observe(this) { forecast ->
+        vmForecast.forecast.observe(this) { forecast ->
             forecast?.let {
                 val intent = Intent(this, ForecastDetailActivity::class.java)
                 intent.putExtra("forecastData", it)
                 startActivity(intent)
-                vmForecastViewModel.clearForecast()
+                vmForecast.clearForecast()
             }
         }
 
-        vmForecastViewModel.isLoading.observe(this) { isLoading ->
+        vmForecast.isLoading.observe(this) { isLoading ->
             if(isLoading) {
                 binding.searchCityProgressBar.visibility = View.VISIBLE
                 binding.btnSearchCity.isEnabled = false
@@ -110,11 +108,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        vmForecastViewModel.error.observe(this) { errorMessage ->
+        vmForecast.error.observe(this) { errorMessage ->
             errorMessage?.let {
                 Toast.makeText(this, it, Toast.LENGTH_LONG).show()
                 binding.etSearchCity.text?.clear()
-                vmForecastViewModel.clearError()
+                vmForecast.clearError()
             }
         }
     }
